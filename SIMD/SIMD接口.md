@@ -101,9 +101,9 @@
 
 ## 6. 移植到新处理器时的流水线替换
 
-`VectorStreamPipeline.scala` 与 `SimdFu.scala` 只是本目录自带的一套参考流水：加法为输入打拍后组合运算再打拍写出，乘法按 `SimdMul32` 的两级内部延迟对齐，并处理 OMAC 累加、同 bank 旁路、写口反压和 VReg 读口占用。它们**不是**运算器规格的一部分。
+`VectorStreamPipeline.scala` 与 `SimdFu.scala` 只是一套参考流水：加法为输入打拍后组合运算再打拍写出，乘法按 `SimdMul32` 的两级内部延迟对齐，并处理 OMAC 累加、同 bank 旁路、写口反压和 VReg 读口占用。
 
-在新处理器中自行搭建流水线时，可以只保留 `SimdArithmetic.scala`（标量 32 位加法器 / 乘法器，由新流水按 lane 例化）和 `VecRegfile.scala`（若仍做 OMAC 累加），用本机的发射、冲刷、反压和写回控制替换上述两个文件。替换时需自行对齐乘法器内部延迟，并视是否保留 OMAC 决定是否实现广播、旁路与 VReg 端口仲裁。`dstToVReg`、加法延迟拍数等也由新流水自行约定。
+在新处理器中自行搭建流水线时，可以只保留 `SimdArithmetic.scala`（标量 32 位加法器 / 乘法器，由新流水按 lane 例化）和 `VecRegfile.scala`（若仍做 MAC 累加），用本机的发射、冲刷、反压和写回控制替换上述两个文件。替换时需自行对齐乘法器内部延迟，并视是否保留 OMAC 决定是否实现广播、旁路与 VReg 端口仲裁。`dstToVReg`、加法延迟拍数等也由新流水自行约定。
 
 此流水线遵循以下调用约定
 
